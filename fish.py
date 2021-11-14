@@ -22,6 +22,9 @@ fails = 1
 def fish():
     global fails
     print('initiating fish action...')
+    fishingmode = eyes.lookAnywhere('fishing_mode.png', threshold=0.2)
+    if fishingmode == None:
+        arduino.keyclick('i')
     arduino.mousepress()
     time.sleep(random.uniform(1.9, 2.05))
     arduino.mouserelease()
@@ -134,11 +137,11 @@ def nomenu():
 
 def move():
     arduino.keypress('w')
-    time.sleep(1)
+    time.sleep(.8)
     arduino.keyrelease('w')
     time.sleep(random.uniform(.2, .6))
     arduino.keypress('s')
-    time.sleep(1.3)
+    time.sleep(1.2)
     arduino.keyrelease('s')
     time.sleep(random.uniform(.2, .6))
     arduino.keypress('a')
