@@ -13,7 +13,8 @@ greenColor = (0, 240, 171)
 orangeColor = (239, 113, 22)
 maxElapsedTime = 5
 colorThreshold = 15
-repairIn = 7
+repairIn = 10
+moveIn = 2
 horizontalTicks = 35
 fails = 1
 
@@ -22,7 +23,7 @@ def fish():
     global fails
     print('initiating fish action...')
     arduino.mousepress()
-    time.sleep(random.uniform(1.8, 2.1))
+    time.sleep(random.uniform(1.9, 2.05))
     arduino.mouserelease()
 
     fishing = None
@@ -133,18 +134,28 @@ def nomenu():
 
 def move():
     arduino.keypress('w')
-    time.sleep(.5)
+    time.sleep(1)
     arduino.keyrelease('w')
+    time.sleep(random.uniform(.2, .6))
     arduino.keypress('s')
-    time.sleep(.7)
+    time.sleep(1.3)
     arduino.keyrelease('s')
+    time.sleep(random.uniform(.2, .6))
+    arduino.keypress('a')
+    time.sleep(1)
+    arduino.keyrelease('a')
+    time.sleep(random.uniform(.2, .6))
+    arduino.keypress('d')
+    time.sleep(1.3)
+    arduino.keyrelease('d')
 
 
 def fishing():
     global fails
-    time.sleep(2)
+    time.sleep(1)
     arduino.keyclick('i')
     times = 0
+    movetimes = 0
     while True:
         print(f'fails {fails}')
         nomenu()
@@ -161,8 +172,11 @@ def fishing():
         times += 1
         if times > repairIn:
             repair()
-            move()
             times = 0
+        movetimes += 1
+        if movetimes > moveIn:
+            move()
+            movetimes = 0
 
 
 fishing()
