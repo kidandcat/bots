@@ -4,7 +4,6 @@
 # shutdown /s /t 3600
 import random
 import time
-from cv2 import IMREAD_IGNORE_ORIENTATION
 from numpy import isinf
 import pyautogui
 import arduino
@@ -35,18 +34,23 @@ def fish():
         elapsed = now - startWaitingTime
         if elapsed > maxElapsedTime:
             fails += 1
-            time.sleep(random.uniform(.5, 1.5))
             return
 
     print('now fishing')
-    fails = 0
 
     gotfish = None
     print('waiting fish...')
+    startWaitingTime2 = time.time()
     while gotfish is None:
         gotfish = eyes.lookAnywhere('gotfish.png')
+        now = time.time()
+        elapsed = now - startWaitingTime2
+        if elapsed > 50:
+            fails += 1
+            return
 
     print('got fish')
+    fails = 0
 
     arduino.mouseclick()
     fishing = True
