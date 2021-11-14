@@ -18,23 +18,12 @@ def keyrelease(key: str):
 
 
 def movemouse(x: int, y: int):
-    if x > 127:
-        x = 127
-    if x < -127:
-        x = -127
-    if y > 127:
-        y = 127
-    if y < -127:
-        y = -127
     arduino.write(bytes(f"m{str(x).zfill(4)}{str(y).zfill(4)}\n", 'utf-8'))
     print(arduino.readline())
 
 
-def mousereset():
-    times = 10
-    while times > 0:
-        movemouse(-127, -127)
-        times -= 1
+def movemouserelative(x: int):
+    arduino.write(bytes(f"z{str(x).zfill(4)}\n", 'utf-8'))
 
 
 def mousepress():

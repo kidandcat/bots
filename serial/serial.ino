@@ -1,5 +1,6 @@
 #include <Keyboard.h>
 #include <Mouse.h>
+#include <MouseTo.h>
 
 void setup()
 {
@@ -7,6 +8,7 @@ void setup()
   Serial.setTimeout(1);
   Keyboard.begin();
   Mouse.begin();
+  MouseTo.setCorrectionFactor(1);
 }
 
 int x;
@@ -35,9 +37,15 @@ void loop()
   { // mouse move
     x = command.substring(1, 5).toInt();
     y = command.substring(5, 9).toInt();
-    Mouse.move(x, y, 0);
-    Serial.print("MOVED\n");
+    MouseTo.setTarget(x, y);
+    while (MouseTo.move() == false) {}
+    Serial.print("MOVED to " + String(x) + ", " + String(y) + "\n");
     return;
+  }
+  if (command.substring(0, 1) == "z")
+  { // mouse move relative
+    x = command.substring(1, 5).toInt();
+    Mouse.move(x, 0, 0);
   }
   if (command.substring(0, 1) == "p")
   { // mouse press

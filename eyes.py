@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import time
+from PIL import Image
 import pyautogui
 
 
@@ -17,6 +17,8 @@ def look(image, template, threshold=0.1):
     mnVal, _, mnLoc, _ = cv2.minMaxLoc(result)
     MPx, MPy = mnLoc
     if mnVal > threshold:
-        print(f"{template} not found with {mnVal}")
+        # print(f"{template} not found with {mnVal}")
         return None
-    return MPx, MPy
+    im = Image.open(template)
+    width, height = im.size
+    return MPx + (width//2), MPy + (height//2)

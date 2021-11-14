@@ -1,5 +1,11 @@
+# 3 horas
+# shutdown /s /t 10000
+# 1 hora
+# shutdown /s /t 3600
 import random
 import time
+from cv2 import IMREAD_IGNORE_ORIENTATION
+from numpy import isinf
 import pyautogui
 import arduino
 import eyes
@@ -8,9 +14,13 @@ greenColor = (0, 240, 171)
 orangeColor = (239, 113, 22)
 maxElapsedTime = 5
 colorThreshold = 15
+repairIn = 7
+horizontalTicks = 35
+fails = 1
 
 
 def fish():
+    global fails
     print('initiating fish action...')
     arduino.mousepress()
     time.sleep(random.uniform(1.8, 2.1))
@@ -23,11 +33,13 @@ def fish():
         fishing = eyes.lookAnywhere('fishing.png')
         now = time.time()
         elapsed = now - startWaitingTime
-        if elapsed > 6:
+        if elapsed > maxElapsedTime:
+            fails += 1
             time.sleep(random.uniform(.5, 1.5))
             return
 
     print('now fishing')
+    fails = 0
 
     gotfish = None
     print('waiting fish...')
@@ -46,7 +58,7 @@ def fish():
             arduino.mousepress()
             clicking = True
             lastNotFoundTime = time.time()
-            time.sleep(random.uniform(1, 2))
+            time.sleep(random.uniform(1, 1.5))
         if green is None:
             if clicking:
                 arduino.mouserelease()
@@ -71,46 +83,82 @@ def locate_color(color, point) -> bool:
     return False
 
 
+def clickRef(ref):
+    found = None
+    timeout = time.time()
+    while found is None:
+        found = eyes.lookAnywhere(ref, threshold=0.3)
+        if (time.time() - timeout) > 5:
+            arduino.keyclick('\n')
+            return
+    time.sleep(random.uniform(.2, .6))
+    arduino.movemouse(found[0], found[1])
+    time.sleep(random.uniform(.2, .6))
+    arduino.mouseclick()
+    time.sleep(random.uniform(.2, .6))
+
+
 def repair():
     print('start repairing')
     arduino.keyclick('\t')
     time.sleep(random.uniform(.2, .6))
-    repair = None
-    while repair is None:
-        repair = eyes.lookAnywhere('repair.png', threshold=0.3)
-    print(f'repair {repair}')
-    arduino.mousereset()
-    time.sleep(random.uniform(.2, .6))
-    print('moving mouse')
-    times = 10
-    while times > 0:
-        arduino.movemouse(repair[0], repair[1])
-        times -= 1
-    print('mouse moved')
+    # clickRef('repair.png')
+    # repair start
+    arduino.movemouse(605, 1027)
     time.sleep(random.uniform(.2, .6))
     arduino.mouseclick()
     time.sleep(random.uniform(.2, .6))
+    # repair end
+    clickRef('yes.png')
+    arduino.keyclick('\t')
+    time.sleep(1)
+
+
+def nomenu():
+    timeout = time.time()
+    menu = eyes.lookAnywhere('menu.png', threshold=0.3)
+    while menu != None:
+        arduino.keyclick('\t')
+        time.sleep(1)
+        menu = eyes.lookAnywhere('menu.png', threshold=0.3)
+        if (time.time() - timeout) > 5:
+            print('pressing enter')
+            arduino.keyclick('\n')
+            return
+
+
+def move():
+    arduino.keypress('w')
+    time.sleep(.5)
+    arduino.keyrelease('w')
+    arduino.keypress('s')
+    time.sleep(.7)
+    arduino.keyrelease('s')
 
 
 def fishing():
-    time.sleep(3)
-    arduino.mousereset()
+    global fails
     time.sleep(2)
-    arduino.mouseclick()
+    arduino.keyclick('i')
+    times = 0
     while True:
+        print(f'fails {fails}')
+        nomenu()
+        if fails > 2:
+            for _ in range(10):
+                arduino.movemouserelative(horizontalTicks)
+                time.sleep(random.uniform(.1, .2))
+        fishingmode = eyes.lookAnywhere('fishing_mode.png', threshold=0.2)
+        if fishingmode == None:
+            arduino.keyclick('i')
         time.sleep(random.uniform(1, 3))
         fish()
-        print('Fishing done')
+        print(f'Fishing done {times}')
+        times += 1
+        if times > repairIn:
+            repair()
+            move()
+            times = 0
 
 
-def repairing():
-    time.sleep(3)
-    print('reset mouse')
-    arduino.mousereset()
-    time.sleep(2)
-    print('click')
-    arduino.mouseclick()
-    repair()
-
-
-repairing()
+fishing()
