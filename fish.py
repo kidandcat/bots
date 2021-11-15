@@ -15,7 +15,7 @@ maxElapsedTime = 5
 colorThreshold = 15
 repairIn = 10
 moveIn = 2
-horizontalTicks = 35
+horizontalTicks = 40
 fails = 1
 
 
@@ -141,7 +141,7 @@ def move():
     arduino.keyrelease('s')
     time.sleep(random.uniform(.2, .6))
     arduino.keypress('w')
-    time.sleep(.8)
+    time.sleep(.75)
     arduino.keyrelease('w')
     time.sleep(random.uniform(.2, .6))
     # arduino.keypress('a')
