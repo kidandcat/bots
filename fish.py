@@ -136,21 +136,21 @@ def nomenu():
 
 
 def move():
-    arduino.keypress('w')
-    time.sleep(.8)
-    arduino.keyrelease('w')
-    time.sleep(random.uniform(.2, .6))
     arduino.keypress('s')
     time.sleep(1.2)
     arduino.keyrelease('s')
     time.sleep(random.uniform(.2, .6))
-    arduino.keypress('a')
-    time.sleep(1)
-    arduino.keyrelease('a')
+    arduino.keypress('w')
+    time.sleep(.8)
+    arduino.keyrelease('w')
     time.sleep(random.uniform(.2, .6))
-    arduino.keypress('d')
-    time.sleep(1.3)
-    arduino.keyrelease('d')
+    # arduino.keypress('a')
+    # time.sleep(1)
+    # arduino.keyrelease('a')
+    # time.sleep(random.uniform(.2, .6))
+    # arduino.keypress('d')
+    # time.sleep(1.3)
+    # arduino.keyrelease('d')
 
 
 def fishing():
