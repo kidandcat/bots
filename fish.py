@@ -15,7 +15,8 @@ maxElapsedTime = 5
 colorThreshold = 15
 repairIn = 10
 moveIn = 2
-horizontalTicks = 40
+horizontalMoves = 20
+horizontalTicks = 50
 fails = 1
 
 
@@ -163,7 +164,7 @@ def fishing():
         print(f'fails {fails}')
         nomenu()
         if fails > 2:
-            for _ in range(10):
+            for _ in range(horizontalMoves):
                 arduino.movemouserelative(horizontalTicks)
                 time.sleep(random.uniform(.1, .2))
         fishingmode = eyes.lookAnywhere('fishing_mode.png', threshold=0.2)
